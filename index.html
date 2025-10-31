@@ -6,328 +6,312 @@
 <title>AISatoshi — Proof of Performance</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
 <style>
 :root{
-  /* Brand palette */
-  --night:#040b19;
-  --depth:#07132c;
-  --panel:rgba(12,28,64,.55);
-  --glass:rgba(12,28,64,.35);
-  --line:#00fff2;
-  --glow:#00bfa6;
-  --loss:#ff3b6b;
-  --text:#e8f6ff;
-  --muted:#8fb0d1;
+  /* Executive palette */
+  --bg1:#0a1224;        /* midnight indigo */
+  --bg2:#0f1a34;        /* deep navy */
+  --panel:rgba(20,33,66,.66);
+  --panel-strong:rgba(20,33,66,.85);
+  --glass:rgba(255,255,255,.06);
+  --text:#e9eef7;
+  --muted:#9fb0c9;
 
-  /* Effects */
-  --ring: 0 0 35px rgba(0,255,242,.22), 0 0 12px rgba(0,191,166,.25);
+  /* Accents */
+  --accent:#87b4ff;     /* steel-blue */
+  --accent-2:#b7ccff;
+  --gold:#d7b86a;       /* executive gold */
+  --gold-soft:#f1e3b1;
+  --loss:#ff5a6f;
+
+  --ring:0 0 24px rgba(135,180,255,.12);
 }
 
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-  margin:0;
-  font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif;
-  color:var(--text);
-  background: radial-gradient(1200px 800px at 15% 10%, rgba(0,191,166,.11), transparent 60%),
-              radial-gradient(1200px 800px at 85% -10%, rgba(0,255,242,.09), transparent 60%),
-              linear-gradient(160deg, var(--night), #061227 60%, var(--depth) 100%);
+  margin:0;font-family:'Inter',system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);
+  background:
+    radial-gradient(1200px 800px at 15% -10%, rgba(135,180,255,.08), transparent 60%),
+    radial-gradient(1000px 700px at 85% 10%, rgba(215,184,106,.06), transparent 60%),
+    linear-gradient(180deg,var(--bg1),var(--bg2));
   overflow-x:hidden;
 }
 
-/* Animated AI grid background */
-.bg-grid{
-  position:fixed; inset:0; z-index:-1;
-  background:
-    linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
-  background-size:42px 42px, 42px 42px;
-  transform: perspective(900px) rotateX(55deg) translateY(-260px);
-  filter: drop-shadow(0 0 20px rgba(0,255,242,.06));
-  animation: drift 24s linear infinite;
-  opacity:.18;
-}
-@keyframes drift{
-  0%{background-position:0 0,0 0}
-  100%{background-position:0 42px,42px 0}
-}
-
 /* Header */
-header{
-  padding:54px 18px 20px;
-  text-align:center;
-}
+header{padding:54px 18px 22px;text-align:center}
 h1{
-  margin:0;
-  font-size:clamp(28px,4.8vw,44px);
-  letter-spacing:.2px;
-  color:var(--line);
-  text-shadow:0 0 18px rgba(0,255,242,.25);
+  margin:0;font-size:clamp(28px,4.6vw,44px);letter-spacing:.2px;
+  color:var(--accent);
+  text-shadow:0 0 10px rgba(135,180,255,.15);
 }
-.sub{
-  margin:8px 0 0;
-  color:var(--muted);
-  font-size:14px;
-}
+.sub{margin:8px 0 0;color:var(--muted);font-size:14px}
+.stamp{margin-top:8px;color:var(--muted);font-size:12px}
 
-/* Layout */
-.container{max-width:1200px;margin:0 auto;padding:0 18px 54px}
-.kpi{
-  display:grid; gap:16px; margin:22px 0;
+/* Container */
+.container{max-width:1180px;margin:0 auto;padding:0 18px 54px}
+
+/* KPI row */
+.kpis{
+  display:grid;gap:16px;margin:22px 0 8px;
   grid-template-columns:repeat(4,1fr);
 }
-@media (max-width:980px){.kpi{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:560px){.kpi{grid-template-columns:1fr}}
+@media (max-width:980px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.kpis{grid-template-columns:1fr}}
 
 .card{
-  background:linear-gradient(180deg, var(--panel), rgba(8,20,48,.45));
-  border:1px solid rgba(0,255,242,.18);
-  border-radius:18px; padding:18px 18px 16px;
-  box-shadow:var(--ring);
-  backdrop-filter: blur(6px);
-  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  background:linear-gradient(180deg,var(--panel),var(--panel-strong));
+  border:1px solid rgba(183,204,255,.22);
+  border-radius:16px;padding:16px 16px 14px;
+  box-shadow:var(--ring);backdrop-filter:blur(6px);
+  transition:transform .2s ease,border-color .2s ease, box-shadow .2s ease;
 }
-.card:hover{
-  transform:translateY(-3px);
-  box-shadow:0 0 42px rgba(0,255,242,.28), 0 0 10px rgba(0,191,166,.32);
-  border-color:rgba(0,255,242,.35);
-}
-.card h3{
-  margin:0 0 6px; font-size:12px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted);
-}
-.metric{
-  font-size:28px; font-weight:800; letter-spacing:.2px;
-}
-.metric small{font-size:12px; color:var(--muted); margin-left:8px}
-.trend{margin-top:6px; font-size:12px}
-.up{color:var(--glow)} .down{color:var(--loss)}
+.card:hover{transform:translateY(-2px);border-color:rgba(215,184,106,.35);box-shadow:0 10px 28px rgba(0,0,0,.25), 0 0 28px rgba(215,184,106,.12)}
+.card h3{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+.metric{font-size:26px;font-weight:800;letter-spacing:.2px}
+.metric .unit{font-weight:600;font-size:13px;color:var(--muted);margin-left:6px}
+.trend{margin-top:6px;font-size:12px}
+.up{color:var(--gold)} .down{color:var(--loss)}
 
-/* Panels */
+/* Panels & charts */
 .grid{
-  display:grid; gap:18px; margin-top:10px;
+  display:grid;gap:16px;margin-top:14px;
   grid-template-columns:2fr 1fr;
 }
 @media (max-width:1080px){.grid{grid-template-columns:1fr}}
-.panel{
-  background:linear-gradient(180deg, var(--glass), rgba(8,20,48,.35));
-  border:1px dashed rgba(0,255,242,.2);
-  border-radius:18px; padding:16px 16px 18px;
-  box-shadow:var(--ring);
-}
-.panel h2{margin:0 0 10px; font-size:16px; color:var(--line)}
-.hint{font-size:12px; color:var(--muted); margin-top:8px}
 
-canvas{width:100%!important; max-height:360px; background:rgba(4,12,30,.55); border-radius:12px}
+.panel{
+  background:linear-gradient(180deg,var(--panel),var(--panel-strong));
+  border:1px solid rgba(183,204,255,.22);
+  border-radius:16px;padding:16px 16px 18px;box-shadow:var(--ring);backdrop-filter:blur(6px);
+}
+.panel h2{margin:0 0 8px;font-size:16px;color:var(--accent-2);letter-spacing:.2px}
+.hint{font-size:12px;color:var(--muted);margin-top:8px}
+
+canvas{
+  width:100%!important;max-height:360px;
+  background:linear-gradient(180deg, rgba(255,255,255,.03), transparent), rgba(8,16,34,.6);
+  border:1px solid rgba(255,255,255,.06);border-radius:12px;
+}
 
 /* Footer */
-footer{margin-top:20px; color:var(--muted); font-size:12px; text-align:center}
+footer{margin-top:20px;color:var(--muted);font-size:12px;text-align:center}
 
-/* Status row */
-.status{
-  display:flex; gap:10px; align-items:center; justify-content:center;
-  color:var(--muted); font-size:12px; margin-top:10px;
+/* Buttons (optional) */
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.btn{
+  appearance:none;border:1px solid rgba(183,204,255,.22);background:transparent;color:var(--text);
+  padding:9px 12px;border-radius:10px;font-weight:600;letter-spacing:.2px;cursor:pointer;
 }
-.pulse{width:8px;height:8px;border-radius:50%;background:var(--glow);box-shadow:0 0 0 0 rgba(0,191,166,.7);animation:pulse 2s infinite}
-@keyframes pulse{0%{transform:scale(.9);box-shadow:0 0 0 0 rgba(0,191,166,.7)}70%{transform:scale(1);box-shadow:0 0 0 12px rgba(0,191,166,0)}100%{transform:scale(.9);box-shadow:0 0 0 0 rgba(0,191,166,0)}}
+.btn:hover{border-color:rgba(215,184,106,.45);box-shadow:0 0 18px rgba(215,184,106,.12)}
 </style>
 </head>
 <body>
-<div class="bg-grid"></div>
-
 <header>
-  <h1>AISatoshi — Proof of Performance</h1>
-  <div class="sub">Institutional-grade telemetry. Live AI insights. Transparent outcomes.</div>
-  <div class="status"><span class="pulse"></span><span id="stamp">Last updated: —</span></div>
+  <h1>Proof of Performance</h1>
+  <div class="sub">Executive dashboard — AI trading telemetry and verified outcomes</div>
+  <div class="stamp" id="stamp">Last updated: —</div>
 </header>
 
 <div class="container">
-  <!-- KPIs -->
-  <section class="kpi">
-    <div class="card"><h3>Cumulative ROI</h3><div class="metric" id="k1">—</div><div class="trend" id="k1t"></div></div>
-    <div class="card"><h3>Win Rate</h3><div class="metric" id="k2">—</div><div class="trend" id="k2t"></div></div>
-    <div class="card"><h3>Max Drawdown</h3><div class="metric" id="k3">—</div><div class="trend" id="k3t"></div></div>
-    <div class="card"><h3>Current Momentum</h3><div class="metric" id="k4">—</div><div class="trend" id="k4t"></div></div>
+  <!-- KPI Cards -->
+  <section class="kpis">
+    <div class="card">
+      <h3>Cumulative ROI</h3>
+      <div class="metric"><span id="kCumul">0</span><span class="unit">%</span></div>
+      <div class="trend" id="kCumulT"></div>
+    </div>
+    <div class="card">
+      <h3>Win Rate</h3>
+      <div class="metric"><span id="kWin">0</span><span class="unit">%</span></div>
+      <div class="trend" id="kWinT">based on <span id="kTrades">0</span> trades</div>
+    </div>
+    <div class="card">
+      <h3>Max Drawdown</h3>
+      <div class="metric"><span id="kDD">0</span><span class="unit">%</span></div>
+      <div class="trend" id="kDDT">lowest recorded</div>
+    </div>
+    <div class="card">
+      <h3>Current Momentum</h3>
+      <div class="metric"><span id="kMom">0</span><span class="unit">%</span></div>
+      <div class="trend" id="kMomT"></div>
+    </div>
   </section>
 
   <!-- Charts -->
   <section class="grid">
     <div class="panel">
-      <h2>Equity Curve & Drawdown (Glow)</h2>
-      <canvas id="equity"></canvas>
-      <div class="hint">Includes AI stop-loss discipline (typ. ~5% band) and surge cycles up to 1200% in favorable conditions.</div>
+      <h2>Equity Curve & Drawdown</h2>
+      <canvas id="equityChart"></canvas>
+      <div class="hint">Includes stop-loss discipline (~5%) and exceptional cycles (up to 1200% in favorable conditions).</div>
     </div>
     <div class="panel">
       <h2>Win / Loss Distribution</h2>
-      <canvas id="dist"></canvas>
+      <canvas id="distChart"></canvas>
       <div class="hint">Rolling window of verified outcomes.</div>
     </div>
   </section>
 
-  <section class="panel" style="margin-top:18px">
+  <section class="panel" style="margin-top:16px">
     <h2>Monthly ROI (%)</h2>
-    <canvas id="monthly"></canvas>
-    <div class="hint">Hover to inspect exact percentages. Export raw CSV available on request.</div>
+    <canvas id="monthlyChart"></canvas>
+    <div class="btnrow">
+      <button class="btn" id="dlCsv">Download CSV</button>
+      <button class="btn" id="lightMode">Subtle Light Mode</button>
+    </div>
+    <div class="hint">Hover bars to inspect monthly changes. CSV exports month & ROI only.</div>
   </section>
 
   <footer>
-    *Past performance is not indicative of future results. Cryptocurrency trading involves risk, including potential loss of capital. AISatoshi never has withdrawal access to user funds; API keys use trade-only permissions.*
+    *Past performance is not indicative of future results. Crypto trading involves risk, including loss of capital. AISatoshi operates with trade-only API permissions; no withdrawal access to user funds.*
   </footer>
 </div>
 
 <script>
-/* --------- Inline data (edit here to update) --------- */
+/* ===== Inline data (edit to update) ===== */
 const DATA = {
   labels:["Nov 2024","Dec 2024","Jan 2025","Feb 2025","Mar 2025","Apr 2025","May 2025","Jun 2025","Jul 2025","Aug 2025","Sep 2025","Oct 2025"],
   equity:[0,14,33,52,78,120,250,470,820,1200,1175,1320],
   drawdown:[0,-1.8,-2.3,-4.1,-2.9,-3.8,-4.5,-3.7,-6.2,-5.1,-3.0,-2.4],
   monthly:[5.2,14.0,19.3,21.4,26.6,42.3,108.0,87.5,74.3,46.3,-2.1,12.3],
-  wins:458, losses:41,
-  momentum:0.91
+  wins:458, losses:41, momentum:0.91
 };
 
-/* --------- Chart.js defaults + glow plugin --------- */
-Chart.defaults.color = get('--text');
-Chart.defaults.borderColor = 'rgba(143,176,209,.22)';
-Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
-
-/* Glow line effect */
-const glowLines = {
-  id:'glow',
-  beforeDatasetsDraw(chart, args, pluginOpts){
-    const {ctx, chartArea:{top,left,right,bottom}} = chart;
-    chart.data.datasets.forEach((ds, i)=>{
-      if(ds._glow !== true) return;
-      const meta = chart.getDatasetMeta(i);
-      ctx.save();
-      ctx.shadowColor = pluginOpts?.color || '#00fff2';
-      ctx.shadowBlur = pluginOpts?.blur || 18;
-      ctx.lineWidth = ds.borderWidth || 2;
-      ctx.strokeStyle = get('--line');
-      ctx.beginPath();
-      meta.data.forEach((pt, idx)=> {
-        const {x,y} = pt.getProps(['x','y'], true);
-        if(idx===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-      });
-      ctx.stroke();
-      ctx.restore();
-    });
+/* ===== Utility ===== */
+const $$ = sel => document.querySelector(sel);
+function fmtPct(v){ return (v>=0?'+':'') + Number(v).toFixed(1); }
+function trend(delta){ return (delta>=0? `<span class="up">▲ +${delta.toFixed(1)}%</span>` : `<span class="down">▼ ${delta.toFixed(1)}%</span>`); }
+function countUp(el, to, suffix="", dur=900){
+  const start = 0, t0 = performance.now();
+  function step(t){
+    const p = Math.min(1,(t-t0)/dur);
+    el.textContent = (start + (to-start)*p).toFixed(1).replace(/\.0$/,"");
+    if(p<1) requestAnimationFrame(step);
   }
-};
-Chart.register(glowLines);
+  requestAnimationFrame(step);
+}
 
-/* --------- KPIs --------- */
+/* ===== KPIs ===== */
 (function kpis(){
   const last = DATA.equity.at(-1) ?? 0;
   const prev = DATA.equity.at(-2) ?? 0;
   const wr = DATA.wins + DATA.losses > 0 ? (DATA.wins/(DATA.wins+DATA.losses)*100) : 0;
   const maxDD = Math.min(...DATA.drawdown);
-  const cyc = DATA.monthly.at(-1) ?? 0;
+  const mom = Math.round((DATA.momentum||0)*100);
 
-  set('k1', pct(last) + '<small> since inception</small>');
-  set('k1t', trend(last - prev));
+  countUp($$("#kCumul"), last);
+  $$("#kCumulT").innerHTML = trend(last - prev);
 
-  set('k2', wr.toFixed(1) + '%');
-  set('k2t', 'based on ' + (DATA.wins+DATA.losses) + ' trades');
+  countUp($$("#kWin"), wr);
+  $$("#kTrades").textContent = (DATA.wins + DATA.losses).toString();
 
-  set('k3', pct(maxDD));
-  set('k3t', 'lowest recorded');
+  countUp($$("#kDD"), maxDD);
+  countUp($$("#kMom"), mom);
+  $$("#kMomT").innerHTML = mom>=75 ? '<span class="up">▲ strong</span>' : '<span class="down">▼ cooling</span>';
 
-  set('k4', (DATA.momentum*100).toFixed(0) + '%');
-  set('k4t', DATA.momentum >= .75 ? '<span class="up">▲ strong</span>' : '<span class="down">▼ cooling</span>');
-
-  document.getElementById('stamp').textContent = 'Last updated: ' + new Date().toLocaleString();
+  $$("#stamp").textContent = "Last updated: " + new Date().toLocaleString();
 })();
 
-/* --------- Charts --------- */
+/* ===== Chart defaults ===== */
+Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
+Chart.defaults.borderColor = 'rgba(183,204,255,.20)';
+Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
 
-/* Equity + Drawdown (with glow) */
-new Chart(document.getElementById('equity'), {
+/* ===== Charts ===== */
+const equityCfg = {
   type:'line',
   data:{
-    labels: DATA.labels,
+    labels:DATA.labels,
     datasets:[
-      {
-        label:'Equity (%)',
-        data: DATA.equity,
-        borderColor: get('--line'),
-        backgroundColor: 'rgba(0,255,242,.10)',
-        borderWidth: 2,
-        fill: true,
-        tension: .35,
-        _glow: true   // tell our plugin to glow this dataset
+      { label:'Equity (%)',
+        data:DATA.equity,
+        borderColor:getCSS('--accent'),
+        backgroundColor:'rgba(183,204,255,.12)',
+        borderWidth:2.2, fill:true, tension:.32
       },
-      {
-        label:'Drawdown',
-        data: DATA.drawdown,
-        borderColor: get('--loss'),
-        backgroundColor: 'rgba(255,59,107,.10)',
-        borderDash: [6,4],
-        borderWidth: 1.6,
-        fill: true,
-        tension: .25
+      { label:'Drawdown',
+        data:DATA.drawdown,
+        borderColor:getCSS('--loss'),
+        backgroundColor:'rgba(255,90,111,.12)',
+        borderDash:[6,4], borderWidth:1.6, fill:true, tension:.2
       }
     ]
   },
   options:{
     responsive:true,
-    animation:{duration:1800, easing:'easeInOutCubic'},
-    plugins:{legend:{labels:{color:get('--muted')}}},
+    animation:{duration:1200, easing:'easeInOutCubic'},
+    plugins:{legend:{labels:{color:getCSS('--muted')}}},
     scales:{
-      x:{grid:{color:'rgba(255,255,255,.05)'}, ticks:{color:get('--muted')}},
-      y:{grid:{color:'rgba(255,255,255,.05)'}, ticks:{color:get('--muted'), callback:v=> v+'%'}}
+      x:{grid:{color:'rgba(255,255,255,.05)'}, ticks:{color:getCSS('--muted')}},
+      y:{grid:{color:'rgba(255,255,255,.05)'}, ticks:{color:getCSS('--muted'), callback:v=> v+'%'}}
     }
+  }
+};
+const monthlyCfg = {
+  type:'bar',
+  data:{
+    labels:DATA.labels,
+    datasets:[
+      { data:DATA.monthly,
+        backgroundColor:(ctx)=> ctx.raw>=0 ? 'rgba(215,184,106,.42)' : 'rgba(255,90,111,.60)',
+        borderWidth:0, borderRadius:6
+      }
+    ]
   },
-  plugins:[{id:'glow', beforeDatasetsDraw: glowLines.beforeDatasetsDraw, options:{color:'#00fff2', blur:18}}]
-});
-
-/* Win / Loss donut */
-new Chart(document.getElementById('dist'), {
+  options:{
+    responsive:true,
+    animation:{duration:1000, easing:'easeInOutCubic'},
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{grid:{display:false}, ticks:{color:getCSS('--muted')}},
+      y:{grid:{color:'rgba(255,255,255,.06)'}, ticks:{color:getCSS('--muted'), callback:v=> v+'%'}}
+    }
+  }
+};
+const distCfg = {
   type:'doughnut',
   data:{
     labels:['Wins','Losses'],
-    datasets:[{
-      data:[DATA.wins, DATA.losses],
-      backgroundColor:[get('--glow'), get('--loss')],
+    datasets:[{ data:[DATA.wins, DATA.losses],
+      backgroundColor:[getCSS('--gold'), getCSS('--loss')],
       borderWidth:0
     }]
   },
   options:{
-    animation:{duration:1600, easing:'easeInOutCubic'},
-    plugins:{legend:{labels:{color:get('--muted')}}},
-    cutout:'66%'
-  }
-});
-
-/* Monthly ROI bars */
-new Chart(document.getElementById('monthly'), {
-  type:'bar',
-  data:{
-    labels: DATA.labels,
-    datasets:[{
-      label:'Monthly ROI (%)',
-      data: DATA.monthly,
-      backgroundColor: ctx => (ctx.raw>=0 ? 'rgba(0,191,166,.55)' : 'rgba(255,59,107,.65)'),
-      borderWidth:0,
-      borderRadius:6
-    }]
-  },
-  options:{
     responsive:true,
-    animation:{duration:1400,easing:'easeInOutCubic'},
-    plugins:{legend:{display:false}},
-    scales:{
-      x:{grid:{display:false}, ticks:{color:get('--muted')}},
-      y:{grid:{color:'rgba(255,255,255,.06)'}, ticks:{color:get('--muted'), callback:v=> v+'%'}}
-    }
+    animation:{duration:1200, easing:'easeInOutCubic'},
+    plugins:{legend:{labels:{color:getCSS('--muted')}}},
+    cutout:'64%'
   }
+};
+
+const equityChart = new Chart(document.getElementById('equityChart'), equityCfg);
+const monthlyChart = new Chart(document.getElementById('monthlyChart'), monthlyCfg);
+const distChart   = new Chart(document.getElementById('distChart'),   distCfg);
+
+/* ===== CSV Download ===== */
+document.getElementById('dlCsv').addEventListener('click', ()=>{
+  const rows = [['Month','MonthlyROI(%)']].concat(DATA.labels.map((m,i)=>[m, DATA.monthly[i]]));
+  const csv = rows.map(r=>r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = 'aisatoshi_monthly_performance.csv';
+  a.click();
 });
 
-/* --------- utils --------- */
-function get(varname){ return getComputedStyle(document.documentElement).getPropertyValue(varname).trim(); }
-function set(id, html){ const el = document.getElementById(id); if(el) el.innerHTML = html; }
-function pct(v){ return (v>=0?'+':'') + Number(v).toFixed(1) + '%' }
-function trend(delta){ return (delta>=0 ? '<span class="up">▲ +' + delta.toFixed(1) + '%</span>' : '<span class="down">▼ ' + delta.toFixed(1) + '%</span>') }
+/* ===== Subtle light mode toggle (keeps executive look) ===== */
+const toggler = document.getElementById('lightMode');
+let light=false;
+toggler.addEventListener('click', ()=>{
+  light=!light;
+  document.body.style.background = light
+    ? 'linear-gradient(180deg,#152346,#1a2953)'
+    : 'linear-gradient(180deg,var(--bg1),var(--bg2))';
+  toggler.textContent = light ? 'Return to Executive Mode' : 'Subtle Light Mode';
+});
+
+/* CSS var helper */
+function getCSS(varname){ return getComputedStyle(document.documentElement).getPropertyValue(varname).trim(); }
 </script>
 </body>
 </html>
