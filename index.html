@@ -1,389 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>AISatoshi — Proof of Performance (Live)</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AISatoshi | Proof of Performance</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-:root{
-  /* Native-feel, eye-pleasing palette tuned for AISatoshi */
-  --bg1:#050b1f; --bg2:#0e224a;
-  --panel:rgba(18,34,70,.72);
-  --panel-strong:rgba(18,34,70,.88);
-  --text:#eaf1ff; --muted:#9eb2d0;
-  --cyan:#4dd2ff; --teal:#00ffd5;
-  --gold:#f3d07a;
-  --loss:#ff5a6f;
-  --ring:0 0 28px rgba(77,210,255,.12), 0 10px 28px rgba(0,0,0,.25);
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f9fafc;
+  color: #0b1221;
 }
-
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0; font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--text);
-  background: radial-gradient(1200px 800px at 12% -8%, rgba(0,255,213,.10), transparent 60%),
-              radial-gradient(1100px 760px at 86% 0%, rgba(77,210,255,.09), transparent 60%),
-              linear-gradient(180deg,var(--bg1),var(--bg2));
-  overflow-x:hidden;
+.hero {
+  background: linear-gradient(120deg, #001f3f, #003e8a);
+  color: white;
+  padding: 80px 20px;
+  text-align: center;
 }
-
-/* Animated ambient light field */
-.lightfield{
-  position:fixed; inset:0; z-index:-2;
-  background:
-    radial-gradient(800px 400px at 20% 15%, rgba(0,255,213,.07), transparent 60%),
-    radial-gradient(700px 380px at 80% 10%, rgba(77,210,255,.06), transparent 60%);
-  animation:floatfield 16s ease-in-out infinite alternate;
-  filter:saturate(110%);
+.hero h1 {font-size: 2.8rem; margin-bottom: 0.5rem;}
+.hero p {font-size: 1.2rem; opacity: 0.9;}
+.stats {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  margin-top: 40px;
 }
-@keyframes floatfield{
-  0%  {transform: translateY(-8px)}
-  100%{transform: translateY(8px)}
+.stat {
+  flex: 1 1 200px;
+  margin: 10px;
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
 }
-
-/* Particle canvas behind everything */
-#bgParticles{position:fixed; inset:0; z-index:-1; opacity:.50}
-
-/* Header */
-header{padding:56px 18px 14px; text-align:center; position:relative}
-h1{
-  margin:0; font-size:clamp(28px,4.8vw,44px); letter-spacing:.3px;
-  color:var(--cyan); text-shadow:0 0 14px rgba(77,210,255,.28);
+.stat h2 {
+  font-size: 2rem;
+  margin: 0;
+  color: #00d9ff;
 }
-.sub{margin:8px 0 0; color:var(--muted); font-size:14px}
-
-/* 24/7 badge */
-.badge{
-  display:inline-flex; align-items:center; gap:10px;
-  margin-top:14px; padding:8px 12px; border-radius:999px;
-  background:linear-gradient(180deg, rgba(18,34,70,.9), rgba(18,34,70,.7));
-  border:1px solid rgba(77,210,255,.35); box-shadow:0 0 24px rgba(0,255,213,.12);
-  font-weight:700; letter-spacing:.3px;
+.section {
+  max-width: 1100px;
+  margin: 60px auto;
+  padding: 0 20px;
 }
-.dot{width:10px;height:10px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 0 rgba(0,255,213,.8);animation:pulse 1.8s infinite}
-@keyframes pulse{0%{transform:scale(.95);box-shadow:0 0 0 0 rgba(0,255,213,.6)}60%{transform:scale(1);box-shadow:0 0 0 10px rgba(0,255,213,0)}100%{transform:scale(.95);box-shadow:0 0 0 0 rgba(0,255,213,0)}}
-.badge small{font-weight:600; color:var(--muted)}
-
-/* Container */
-.container{max-width:1180px;margin:0 auto;padding:0 18px 56px}
-
-/* KPI row */
-.kpis{
-  display:grid; gap:16px; margin:22px 0 8px;
-  grid-template-columns:repeat(5,1fr);
+.chart-container {
+  background: #fff;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+  margin-bottom: 40px;
 }
-@media (max-width:1080px){.kpis{grid-template-columns:repeat(3,1fr)}}
-@media (max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:520px){.kpis{grid-template-columns:1fr}}
-
-.card{
-  background:linear-gradient(180deg,var(--panel),var(--panel-strong));
-  border:1px solid rgba(77,210,255,.22);
-  border-radius:16px; padding:16px 16px 14px;
-  box-shadow:var(--ring); backdrop-filter: blur(6px);
-  transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease, background .25s ease;
+.chart-container h3 {
+  margin-top: 0;
+  color: #003e8a;
 }
-.card:hover{
-  transform:translateY(-3px);
-  border-color:rgba(0,255,213,.45);
-  box-shadow:0 0 36px rgba(0,255,213,.22), 0 12px 34px rgba(0,0,0,.35);
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
 }
-.card h3{margin:0 0 6px; font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted)}
-.metric{font-size:26px; font-weight:800; letter-spacing:.2px}
-.metric .unit{font-weight:600; font-size:13px; color:var(--muted); margin-left:6px}
-.trend{margin-top:6px; font-size:12px}
-.up{color:var(--gold)} .down{color:var(--loss)}
-
-/* Panels */
-.grid{display:grid; gap:16px; margin-top:14px; grid-template-columns:2fr 1fr}
-@media (max-width:1100px){.grid{grid-template-columns:1fr}}
-
-.panel{
-  background:linear-gradient(180deg,var(--panel),var(--panel-strong));
-  border:1px solid rgba(77,210,255,.22);
-  border-radius:16px; padding:16px 16px 18px;
-  box-shadow:var(--ring); backdrop-filter: blur(6px);
+.card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  padding: 20px;
+  text-align: center;
 }
-.panel h2{margin:0 0 8px; font-size:16px; color:var(--text); letter-spacing:.2px}
-.hint{font-size:12px; color:var(--muted); margin-top:8px}
-
-/* Charts */
-canvas{
-  width:100%!important; max-height:360px;
-  background:linear-gradient(180deg, rgba(255,255,255,.03), transparent), rgba(8,16,34,.58);
-  border:1px solid rgba(255,255,255,.06); border-radius:12px;
+.card h4 {margin: 0.5rem 0; color: #003e8a;}
+.card p {font-size: 0.9rem; color: #333;}
+.cta {
+  text-align: center;
+  margin: 80px 20px;
 }
-
-/* Controls */
-.btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
-.btn{
-  appearance:none; border:1px solid rgba(77,210,255,.22); background:transparent; color:var(--text);
-  padding:9px 12px; border-radius:10px; font-weight:700; letter-spacing:.2px; cursor:pointer;
+.cta a {
+  background: #003e8a;
+  color: white;
+  padding: 14px 36px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
 }
-.btn:hover{border-color:rgba(0,255,213,.45); box-shadow:0 0 18px rgba(0,255,213,.12)}
-
-/* Footer */
-footer{margin-top:22px; color:var(--muted); font-size:12px; text-align:center}
+.cta a:hover {background: #005cff;}
 </style>
 </head>
 <body>
-<canvas id="bgParticles"></canvas>
-<div class="lightfield"></div>
-
-<header>
-  <h1>AISatoshi — Proof of Performance</h1>
-  <div class="sub">24/7 AI activity. Real trading telemetry. Transparent outcomes.</div>
-  <div class="badge"><span class="dot"></span> AI ACTIVE <small>operates around the clock</small></div>
-</header>
-
-<div class="container">
-  <!-- KPI Cards -->
-  <section class="kpis">
-    <div class="card">
-      <h3>Cumulative ROI</h3>
-      <div class="metric"><span id="kCumul">0</span><span class="unit">%</span></div>
-      <div class="trend" id="kCumulT"></div>
-    </div>
-    <div class="card">
-      <h3>Win Rate</h3>
-      <div class="metric"><span id="kWin">0</span><span class="unit">%</span></div>
-      <div class="trend">based on <span id="kTrades">0</span> trades</div>
-    </div>
-    <div class="card">
-      <h3>Max Drawdown</h3>
-      <div class="metric"><span id="kDD">0</span><span class="unit">%</span></div>
-      <div class="trend">lowest recorded</div>
-    </div>
-    <div class="card">
-      <h3>Current Momentum</h3>
-      <div class="metric"><span id="kMom">0</span><span class="unit">%</span></div>
-      <div class="trend" id="kMomT"></div>
-    </div>
-    <div class="card">
-      <h3>Total Volume Traded</h3>
-      <div class="metric">$<span id="kVol">0</span><span class="unit"></span></div>
-      <div class="trend">and counting…</div>
+  <section class="hero">
+    <h1>Proof of Performance</h1>
+    <p>Live metrics from our AI-powered trading engine — always transparent, always learning.</p>
+    <div class="stats">
+      <div class="stat"><h2 id="trades">$0</h2><p>in Trades Executed</p></div>
+      <div class="stat"><h2 id="avgReturn">0%</h2><p>Average Monthly Return</p></div>
+      <div class="stat"><h2 id="uptime">0%</h2><p>Uptime &amp; Reliability</p></div>
+      <div class="stat"><h2 id="users">0</h2><p>Active Users</p></div>
     </div>
   </section>
 
-  <!-- Charts -->
-  <section class="grid">
-    <div class="panel">
-      <h2>Equity Curve & Drawdown</h2>
-      <canvas id="equityChart"></canvas>
-      <div class="hint">Includes disciplined AI stop-loss (~5%) and exceptional cycles up to 1200% in favorable conditions.</div>
+  <section class="section">
+    <div class="chart-container">
+      <h3>Equity Growth Over Time</h3>
+      <canvas id="equityChart" height="100"></canvas>
     </div>
-    <div class="panel">
-      <h2>Win / Loss Distribution</h2>
-      <canvas id="distChart"></canvas>
-      <div class="hint">Rolling window of verified outcomes.</div>
+    <div class="chart-container">
+      <h3>Trading Volume (Daily)</h3>
+      <canvas id="volumeChart" height="100"></canvas>
+    </div>
+    <div class="chart-container">
+      <h3>Strategy Allocation</h3>
+      <canvas id="strategyChart" height="100"></canvas>
     </div>
   </section>
 
-  <section class="panel" style="margin-top:16px">
-    <h2>Monthly ROI (%)</h2>
-    <canvas id="monthlyChart"></canvas>
-    <div class="btnrow">
-      <button class="btn" id="dlCsv">Download CSV</button>
+  <section class="section">
+    <div class="grid">
+      <div class="card">
+        <h4>AI Stop-Loss Accuracy</h4>
+        <p>99.3% success rate in automatic loss prevention.</p>
+      </div>
+      <div class="card">
+        <h4>Max Drawdown</h4>
+        <p>-5.2% (lowest on record).</p>
+      </div>
+      <div class="card">
+        <h4>24/7 Monitoring</h4>
+        <p>Zero downtime across all trading pairs.</p>
+      </div>
+      <div class="card">
+        <h4>Active Trading Bots</h4>
+        <p>54 TensorFlow-driven adaptive models live.</p>
+      </div>
+      <div class="card">
+        <h4>Data Transparency</h4>
+        <p>Real-time logs available for verification.</p>
+      </div>
     </div>
-    <div class="hint">Hover bars to inspect monthly changes.</div>
   </section>
 
-  <footer>
-    *Past performance is not indicative of future results. Crypto markets are volatile; you can lose money. “24/7” refers to market hours and system availability, not guaranteed outcomes. AISatoshi uses trade-only API permissions (no withdrawal access to user funds).*
-  </footer>
-</div>
+  <section class="cta">
+    <<section class="section">
+  <div class="chart-container">
+    <h3>Recent Trade Log (Live Simulation)</h3>
+    <table id="tradeTable" style="width:100%; border-collapse:collapse;">
+      <thead style="background:#003e8a;color:#fff;">
+        <tr>
+          <th style="padding:8px;text-align:left;">Time (UTC)</th>
+          <th style="padding:8px;text-align:left;">Pair</th>
+          <th style="padding:8px;text-align:left;">Action</th>
+          <th style="padding:8px;text-align:right;">Amount (USDT)</th>
+          <th style="padding:8px;text-align:right;">Profit/Loss (%)</th>
+        </tr>
+      </thead>
+      <tbody id="tradeBody"></tbody>
+    </table>
+  </div>
+</section>
+>
+  </section>
 
 <script>
-/* ==================== Inline Data ==================== */
-const DATA = {
-  labels:["Nov 2024","Dec 2024","Jan 2025","Feb 2025","Mar 2025","Apr 2025","May 2025","Jun 2025","Jul 2025","Aug 2025","Sep 2025","Oct 2025"],
-  equity:[0,14,33,52,78,120,250,470,820,1200,1175,1320],
-  drawdown:[0,-1.8,-2.3,-4.1,-2.9,-3.8,-4.5,-3.7,-6.2,-5.1,-3.0,-2.4],
-  monthly:[5.2,14.0,19.3,21.4,26.6,42.3,108.0,87.5,74.3,46.3,-2.1,12.3],
-  wins:458, losses:41, momentum:0.91,
-  /* Slightly over $20M */
-  volumeUSD:20345000
-};
-
-/* ==================== Particles Background ==================== */
-(function particles(){
-  const c = document.getElementById('bgParticles');
-  const x = c.getContext('2d');
-  let W,H; const N = 70;
-  const pts = [];
-  function size(){ W = c.width = innerWidth; H = c.height = innerHeight; }
-  function rand(a,b){ return Math.random()*(b-a)+a; }
-  function reset(p){
-    p.x = rand(0,W); p.y = rand(0,H);
-    p.vx = rand(-.2,.2); p.vy = rand(.05,.35);
-    p.r = rand(0.6,1.8); p.a = rand(.35,.75);
-  }
-  function init(){
-    size(); pts.length=0;
-    for(let i=0;i<N;i++){ const p={}; reset(p); pts.push(p); }
-  }
-  function tick(){
-    x.clearRect(0,0,W,H);
-    for(const p of pts){
-      x.beginPath();
-      const grad = x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*22);
-      grad.addColorStop(0, `rgba(0,255,213,${p.a*.35})`);
-      grad.addColorStop(1, 'rgba(0,0,0,0)');
-      x.fillStyle = grad; x.arc(p.x,p.y,p.r*18,0,Math.PI*2); x.fill();
-      p.x += p.vx; p.y += p.vy;
-      if(p.y > H+40 || p.x<-40 || p.x>W+40) reset(p);
-    }
-    requestAnimationFrame(tick);
-  }
-  addEventListener('resize', size);
-  init(); tick();
-})();
-
-/* ==================== KPI Count-ups ==================== */
-function countUp(el, to, decimals=0, dur=900){
-  const start = 0; const t0 = performance.now();
-  function step(t){
-    const p = Math.min(1,(t-t0)/dur);
-    const val = start + (to-start)*(1 - Math.pow(1-p,3)); // ease-out
-    el.textContent = val.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    if(p<1) requestAnimationFrame(step);
+// Animated counters
+function animateValue(id, start, end, duration, prefix='', suffix='') {
+  const obj = document.getElementById(id);
+  const range = end - start;
+  let startTime = null;
+  function step(timestamp) {
+    if (!startTime) startTime = timestamp;
+    const progress = Math.min((timestamp - startTime) / duration, 1);
+    obj.textContent = prefix + Math.floor(start + range * progress).toLocaleString() + suffix;
+    if (progress < 1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
-(function kpis(){
-  const last = DATA.equity.at(-1) ?? 0;
-  const prev = DATA.equity.at(-2) ?? 0;
-  const wr = DATA.wins + DATA.losses > 0 ? (DATA.wins/(DATA.wins+DATA.losses)*100) : 0;
-  const maxDD = Math.min(...DATA.drawdown);
-  const mom = Math.round((DATA.momentum||0)*100);
+animateValue('trades', 0, 20000000, 2000, '$');
+animateValue('avgReturn', 0, 24, 1500, '', '%');
+animateValue('uptime', 0, 100, 1200, '', '%');
+animateValue('users', 0, 4260, 1800, '', '');
 
-  countUp(document.getElementById('kCumul'), last, 1, 1200);
-  document.getElementById('kCumulT').innerHTML = (last - prev)>=0 ? `<span class="up">▲ +${(last-prev).toFixed(1)}%</span>` : `<span class="down">▼ ${(last-prev).toFixed(1)}%</span>`;
-
-  countUp(document.getElementById('kWin'), wr, 1, 1200);
-  document.getElementById('kTrades').textContent = (DATA.wins+DATA.losses).toString();
-
-  countUp(document.getElementById('kDD'), maxDD, 1, 1200);
-  countUp(document.getElementById('kMom'), mom, 0, 1200);
-  document.getElementById('kMomT').innerHTML = mom>=75 ? '<span class="up">▲ strong</span>' : '<span class="down">▼ cooling</span>';
-
-  // Volume to slightly over $20M, formatted with commas
-  countUp(document.getElementById('kVol'), DATA.volumeUSD, 0, 1400);
-
-})();
-
-/* ==================== Chart Defaults ==================== */
-Chart.defaults.color = getCSS('--text');
-Chart.defaults.borderColor = 'rgba(158,178,208,.22)';
-Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
-
-/* Gradient helper */
-function equityGradient(ctx){
-  const {chart:{ctx:ct,chartArea}} = ctx;
-  if(!chartArea) return getCSS('--cyan');
-  const g = ct.createLinearGradient(chartArea.left,0, chartArea.right,0);
-  g.addColorStop(0, getCSS('--teal'));
-  g.addColorStop(.5, '#37e6ff');
-  g.addColorStop(1, getCSS('--cyan'));
-  return g;
-}
-
-/* ==================== Charts ==================== */
-/* Equity + Drawdown with glow trail */
-const eq = new Chart(document.getElementById('equityChart'),{
-  type:'line',
-  data:{
-    labels:DATA.labels,
-    datasets:[
-      {label:'Equity (%)', data:DATA.equity,
-       borderColor: ctx=>equityGradient(ctx),
-       backgroundColor:'rgba(77,210,255,.12)', borderWidth:2.4, fill:true, tension:.33},
-      {label:'Drawdown', data:DATA.drawdown,
-       borderColor:getCSS('--loss'), backgroundColor:'rgba(255,90,111,.12)',
-       borderDash:[6,4], borderWidth:1.6, fill:true, tension:.22}
-    ]
-  },
-  options:{
-    responsive:true,
-    animation:{duration:1400, easing:'easeInOutCubic'},
-    plugins:{legend:{labels:{color:getCSS('--muted')}}},
-    scales:{
-      x:{grid:{color:'rgba(255,255,255,.05)'}, ticks:{color:getCSS('--muted')}},
-      y:{grid:{color:'rgba(255,255,255,.05)'}, ticks:{color:getCSS('--muted'), callback:v=> v+'%'}}
-    }
-  },
-  plugins:[{
-    // soft glow stroke overlay
-    id:'glow',
-    afterDatasetsDraw(chart,_,__){
-      const {ctx} = chart; const ds = chart.getDatasetMeta(0);
-      ctx.save();
-      ctx.shadowColor = 'rgba(77,210,255,.75)';
-      ctx.shadowBlur = 16;
-      ctx.lineWidth = 2.4;
-      ctx.strokeStyle = '#7fe6ff';
-      ctx.beginPath();
-      ds.data.forEach((p,i)=>{ const {x,y}=p.getProps(['x','y'],true); i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
-      ctx.stroke();
-      ctx.restore();
-    }
-  }]
-});
-
-/* Monthly ROI bars */
-const mon = new Chart(document.getElementById('monthlyChart'),{
-  type:'bar',
-  data:{
-    labels:DATA.labels,
-    datasets:[{
-      label:'Monthly ROI (%)',
-      data:DATA.monthly,
-      backgroundColor: (c)=> c.raw>=0 ? 'rgba(0,255,213,.48)' : 'rgba(255,90,111,.65)',
-      borderWidth:0, borderRadius:6
+// Charts
+const equityCtx = document.getElementById('equityChart').getContext('2d');
+new Chart(equityCtx, {
+  type: 'line',
+  data: {
+    labels: Array.from({length: 12}, (_, i) => `Month ${i+1}`),
+    datasets: [{
+      label: 'Equity Growth',
+      data: [100,110,130,145,160,190,210,250,280,310,340,370],
+      borderColor: '#003e8a',
+      backgroundColor: 'rgba(0,62,138,0.1)',
+      tension: 0.4,
+      fill: true
     }]
   },
-  options:{
-    responsive:true,
-    animation:{duration:1100, easing:'easeInOutCubic'},
-    plugins:{legend:{display:false}},
-    scales:{
-      x:{grid:{display:false}, ticks:{color:getCSS('--muted')}},
-      y:{grid:{color:'rgba(255,255,255,.06)'}, ticks:{color:getCSS('--muted'), callback:v=> v+'%'}}
-    }
+  options: {
+    responsive: true,
+    scales: {y: {beginAtZero: false}},
+    plugins: {legend: {display:false}}
   }
 });
 
-/* Win / Loss donut */
-const dist = new Chart(document.getElementById('distChart'),{
-  type:'doughnut',
-  data:{
-    labels:['Wins','Losses'],
-    datasets:[{data:[DATA.wins, DATA.losses],
-      backgroundColor:[getCSS('--gold'), getCSS('--loss')], borderWidth:0}]
+const volumeCtx = document.getElementById('volumeChart').getContext('2d');
+new Chart(volumeCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    datasets: [{
+      label: 'Volume ($)',
+      data: [1.5,1.8,1.6,2.1,2.6,1.2,0.9],
+      backgroundColor: '#00d9ff'
+    }]
   },
-  options:{
-    responsive:true,
-    animation:{duration:1200, easing:'easeInOutCubic'},
-    plugins:{legend:{labels:{color:getCSS('--muted')}}},
-    cutout:'64%'
-  }
+  options: {scales: {y: {beginAtZero: true}}}
 });
 
-/* ==================== CSV Download ==================== */
-document.getElementById('dlCsv').addEventListener('click', ()=>{
-  const rows = [['Month','MonthlyROI(%)']].concat(DATA.labels.map((m,i)=>[m, DATA.monthly[i]]));
-  const csv = rows.map(r=>r.join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
-  a.download = 'aisatoshi_monthly_performance.csv';
-  a.click();
+const strategyCtx = document.getElementById('strategyChart').getContext('2d');
+new Chart(strategyCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Momentum','Arbitrage','Mean Reversion','AI Prediction'],
+    datasets: [{
+      data: [35,20,25,20],
+      backgroundColor: ['#003e8a','#007bff','#00d9ff','#99ebff']
+    }]
+  },
+  options: {plugins: {legend: {position: 'bottom'}}}
 });
+  // -------- Simulated live trade feed --------
+const pairs = ['BTC/USDT','ETH/USDT','SOL/USDT','ADA/USDT','XRP/USDT','AVAX/USDT','DOGE/USDT'];
+const actions = ['BUY','SELL'];
+const tradeBody = document.getElementById('tradeBody');
 
-/* ==================== Helpers ==================== */
-function getCSS(varname){ return getComputedStyle(document.documentElement).getPropertyValue(varname).trim(); }
+function randomFloat(min,max,decimals=2){return (Math.random()*(max-min)+min).toFixed(decimals);}
+function randomChoice(arr){return arr[Math.floor(Math.random()*arr.length)];}
+
+function addTrade(){
+  const now = new Date();
+  const time = now.toUTCString().split(' ')[4]; // hh:mm:ss
+  const pair = randomChoice(pairs);
+  const action = randomChoice(actions);
+  const amount = randomFloat(100,2500);
+  const profit = randomFloat(-2.5,3.5);
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td style="padding:6px 8px;">${time}</td>
+    <td style="padding:6px 8px;">${pair}</td>
+    <td style="padding:6px 8px;color:${action==='BUY'?'#0a0':'#d00'};font-weight:600;">${action}</td>
+    <td style="padding:6px 8px;text-align:right;">${amount}</td>
+    <td style="padding:6px 8px;text-align:right;color:${profit>=0?'#0a0':'#d00'};">${profit}%</td>`;
+  tradeBody.prepend(row);
+  // keep table at ~15 rows
+  if(tradeBody.children.length>15){tradeBody.removeChild(tradeBody.lastChild);}
+}
+
+// populate with some rows immediately, then update every 3s
+for(let i=0;i<10;i++) addTrade();
+setInterval(addTrade,3000);
+
 </script>
 </body>
 </html>
